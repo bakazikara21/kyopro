@@ -15,38 +15,45 @@ int main(){
         auto ijoL = RL.lower_bound({L,-1});
         vector<pair<int,int>> resv;
         // L以上の区間を全探索
-        ll mini = L;
-        ll maxi = R;
+        //ll mini = L;
+        //ll maxi = R;
+        bool covered = false;
         while(ijoL != RL.end()){
             if(ijoL->second > R) break;
 
             if(ijoL->first <= R and ijoL->second >= L){
                 // 完全にLからRの間に入っていたら
+                ans += (ijoL->first - ijoL->second + 1);
             }else if(ijoL->first <= R){
-                // R側だけ区間内のとき
-                ans += (ijoL->first - ijoL->second + 1);
-                mini = min(mini,ijoL->second);
+                // R側だけ区間内のとき(高々1個)
+                // 領域を分割する
+                ans += (ijoL->first - L + 1);
+                //mini = max(mini,ijoL->first);
                
-                resv.push_back({R,ijoL->second});
+                resv.push_back({L-1,ijoL->second});
             }else if(ijoL->second >= L){
-                // L側だけ区間内のとき
-                ans += (ijoL->first - ijoL->second + 1);
-                maxi = max(maxi,ijoL->first);
+                // L側だけ区間内のとき(高々1個)
+                // 領域を分割する
+                ans += (R - ijoL->second + 1);
+                //maxi = min(maxi,ijoL->second);
                
-                resv.push_back({ijoL->first,L});
+                resv.push_back({ijoL->first,R+1});
             }else if(ijoL->first > R and ijoL->second < L){
                 // 完全に覆われていたら
-                maxi = 1;
-                mini = 0;
-                continue;
+                covered = true;
+            
+                break;
             }
             ijoL = RL.erase(ijoL);
         }
-        int sz =resv.size();
-		for(int i=0;i<sz;i++){
+        if(covered == false) {
+            resv.push_back({R,L});
+            ans -= R-L+1;
+        }
+        int sz = resv.size();
+		for(int i=0; i < sz; i++){
 			RL.insert(resv[i]);
 		}
-        ans -= maxi-mini+1;
         cout << ans << endl;
     }
 }

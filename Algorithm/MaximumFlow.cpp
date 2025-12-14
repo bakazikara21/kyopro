@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-// Ford-Fulkerson法による最大流を求めるアルゴリズム
-
+// Ford-Fulkerson法による最大流を求めるアルゴリズム(O(FM))
+// 最小カット問題も解ける->最大フロー最小カット定理
 struct Edge {
     int to;  // 行き先
     int cap; // 容量

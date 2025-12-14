@@ -1,13 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
-/*
-最大流->難問
-スタートとゴールを除くと、入ってくる水の量=出る水の量
-残りの容量を順方向の辺として追加し、
-使用済みの容量を逆方向の辺として追加する
-->使用済みの容量を返却できる
-*/
+// Ford-Fulkerson法による最大流を求めるアルゴリズム
+
 struct Edge {
     int to;  // 行き先
     int cap; // 容量
@@ -33,7 +27,7 @@ class MaximumFlow{
         }
 
         int dfs(int pos, int goal, int Flow){
-            // posからgoalまでの経路で最小の容量flowを返す関数
+            // posからgoalまでの経路で最小の容量Flowを返す関数
             visited[pos] = true;
             if(pos == goal) return Flow;
 
@@ -70,16 +64,3 @@ class MaximumFlow{
             return ans;
         }
 };
-int main(){
-    int N,M;
-    cin >> N >> M;
-
-    MaximumFlow mf(N);
-    for(int i = 0; i < M; i++){
-        int A,B,C;
-        cin >> A >> B >> C;
-        A--; B--; C;
-        mf.addEdge(A,B,C);
-    }
-    cout << mf.max_flow(0,N-1) << endl;
-}

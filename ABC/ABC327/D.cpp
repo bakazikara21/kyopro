@@ -10,7 +10,7 @@ int main(){
     for(int i = 0; i < M; i++) cin >> A[i];
     for(int i = 0; i < M; i++) cin >> B[i];
     // 二部グラフになればYes->偶数のサイクルはok
-    // dfsでサイクルの有無を求める
+    // bfsで点2彩色可能かどうかを求める
     vector<vector<int>> graph(N);
     set<pair<int,int>> st;
     for(int i = 0; i < M; i++){

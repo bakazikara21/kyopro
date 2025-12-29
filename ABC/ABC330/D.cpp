@@ -9,28 +9,29 @@ int main(){
     for(int i = 0; i < N; i++){
         cin >> S[i];
     }
-    vector<vector<int>> row(N),column(N);
+    vector<vector<ll>> Ruisekirow(N,vector<ll>(N+1)),Ruisekicolumn(N+1,vector<ll>(N));
     for(int i = 0; i < N; i++){
         for(int j = 0; j < N; j++){
-            if(S[i][j] == 'o'){
-                row[i].push_back(j);
-            }
+            
+            Ruisekirow[i][j+1] = Ruisekirow[i][j]+(S[i][j] == 'o');
         }
     }
     for(int j = 0; j < N; j++){
         for(int i = 0; i < N; i++){
-            if(S[i][j] == 'o'){
-                column[j].push_back(i);
-            }
+            Ruisekicolumn[i+1][j] = Ruisekicolumn[i][j]+(S[i][j] == 'o');
         }
     }
 
     ll ans = 0;
     for(int i = 0; i < N; i++){
-        ll combi = ((ll)row[i].size()-1)*((ll)row[i].size()-2)/2;
-        for(int j : row[i]){
-            ll combj = ((ll)column[j].size()-1)*((ll)column[j].size()-2)/2;
-            ans += combi*combj;
+        for(int j = 0; j < N; j++){
+            if(S[i][j] == 'x') continue;
+
+            ll I = Ruisekirow[i][N]-Ruisekirow[i][j+1];
+            ll J = Ruisekicolumn[N][j]-Ruisekicolumn[i+1][j];
+            I += Ruisekirow[i][j];
+            J += Ruisekicolumn[i][j];
+            ans += I*J;
         }
     }
     cout << ans << endl;

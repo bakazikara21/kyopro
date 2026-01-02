@@ -3,17 +3,20 @@ using namespace std;
 using ll = long long;
 
 class SegRMQ{
-    // セグメント木RMQ
+    // セグメント木RMQ 区間最大
     public:
         vector<ll> seg;
+        int n;
 
         SegRMQ(int N) : seg(2*N){
             for(int i = 0; i < 2*N; i++){
                 seg[i] = 0;
             }
+            n = N;
         }
 
         void update(int pos, ll x){
+            pos += n-1; // 1-indexed
             seg[pos] = x;
             while(pos > 1){
                 // 上層部の最大値区間を更新する
@@ -36,24 +39,39 @@ class SegRMQ{
 };
 
 class SegRSQ{
-    // セグメント木RSQ
+    // セグメント木RSQ 区間和
     public:
         vector<ll> seg;
+        int n;
 
         SegRSQ(int N) : seg(2*N){
             for(int i = 0; i < 2*N; i++){
                 seg[i] = 0;
             }
+            n = N;
         }
 
         void update(int pos, ll x){
-            int dif = x-seg[pos];
+            pos += n-1; // 1-indexed
             seg[pos] = x;
             while(pos > 1){
-                // 上層部の最大値区間を更新する
+                // 上層部の区間和を更新する
                 pos /= 2;
                 // seg[pos]が更新されなかったらbreakでもよいと思う
-                seg[pos] += dif;
+                seg[pos] = seg[pos*2] + seg[pos*2+1];
+            }
+        }
+
+        void add(int pos, ll x){
+            // segに差分配列を持たせると区間加算が実現できる
+            // 区間加算を行うとき、加算による更新が必要
+            pos += n-1; // 1-indexed
+            seg[pos] += x;
+            while(pos > 1){
+                // 上層部の区間和を更新する
+                pos /= 2;
+                // seg[pos]が更新されなかったらbreakでもよいと思う
+                seg[pos] = seg[pos*2] + seg[pos*2+1];
             }
         }
 

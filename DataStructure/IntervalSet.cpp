@@ -46,16 +46,3 @@ public:
         return covered;
     }
 };
-int main(){
-    int N,Q;
-    cin >> N >> Q;
-    
-    IntervalSet inter;
-    for(int q = 0; q < Q; q++){
-        ll L,R;
-        cin >> L >> R;
-
-        inter.add(L,R);
-        cout << N-inter.size() << endl;
-    }
-}

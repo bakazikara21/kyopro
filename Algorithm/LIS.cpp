@@ -2,12 +2,8 @@
 using namespace std;
 using ll = long long;
 const ll INF = (ll)1e18;
+// 最長増加部分列LISを求める
 int main(){
-    int N,K;
-    cin >> N >> K;
-    vector<int> P(N);
-    for(int i = 0; i < N; i++) cin >> P[i];
-
     int N;
     cin >> N;
 

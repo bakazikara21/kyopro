@@ -29,11 +29,20 @@ int main(){
         //cout << S[i];
     }
     //cout << endl;
-    for(int i = N-1; i > 0; i--){
-        start = (pow(3,i)-1)/2 + 1;
-        int jmax = (pow(3,i+1)-1)/2;
-        for(int j = start; j <= jmax; j++){
-            // dp[j][0] -> 000 001 010 100
-        }
+    start = (maximum-1)/2;
+    for(int i = start; i > 0; i--){
+        // 下の部分木は3*i-1, 3*i, 3*i+1
+        // dp[j][0] -> 000 001 010 100
+        dp[i][0] = dp[3*i-1][0]+dp[3*i][0]+dp[3*i+1][0];    // 000にするとき
+        dp[i][0] = min(dp[i][0],dp[3*i-1][0]+dp[3*i][0]+dp[3*i+1][1]);
+        dp[i][0] = min(dp[i][0],dp[3*i-1][0]+dp[3*i][1]+dp[3*i+1][0]);
+        dp[i][0] = min(dp[i][0],dp[3*i-1][1]+dp[3*i][0]+dp[3*i+1][0]);
+
+        // dp[j][1] -> 011 101 110 111
+        dp[i][1] = dp[3*i-1][0]+dp[3*i][1]+dp[3*i+1][1];    // 011にするとき
+        dp[i][1] = min(dp[i][1],dp[3*i-1][1]+dp[3*i][0]+dp[3*i+1][1]);
+        dp[i][1] = min(dp[i][1],dp[3*i-1][1]+dp[3*i][1]+dp[3*i+1][0]);
+        dp[i][1] = min(dp[i][1],dp[3*i-1][1]+dp[3*i][1]+dp[3*i+1][1]);
     }
+    cout << max(dp[1][0],dp[1][1]) << endl;
 }

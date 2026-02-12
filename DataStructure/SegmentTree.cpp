@@ -3,38 +3,58 @@ using namespace std;
 using ll = long long;
 
 class SegRMQ{
-    // セグメント木RMQ 区間最大
+    // セグメント木RMQ 区間最大・最小
     public:
-        vector<ll> seg;
+        vector<ll> segmax;
+        vector<ll> segmin;
         int n;
 
-        SegRMQ(int N) : seg(2*N){
-            for(int i = 0; i < 2*N; i++){
-                seg[i] = 0;
+        SegRMQ(int N){
+            int siz = 1;
+            while(siz < N){
+                siz *= 2;
             }
-            n = N;
+            n = siz;
+            segmax.resize(2*n);
+            segmin.resize(2*n);
+            for(int i = 0; i < 2*n; i++){
+                segmax[i] = 0;
+                segmin[i] = 0;
+            }
         }
 
         void update(int pos, ll x){
             pos += n-1; // 1-indexed
-            seg[pos] = x;
+            segmax[pos] = x;
+            segmin[pos] = x;
             while(pos > 1){
                 // 上層部の最大値区間を更新する
                 pos /= 2;
-                // seg[pos]が更新されなかったらbreakでもよいと思う
-                seg[pos] = max(seg[pos*2],seg[pos*2 + 1]);
+                // segmax[pos]が更新されなかったらbreakでもよいと思う
+                segmax[pos] = max(segmax[pos*2],segmax[pos*2 + 1]);
+                segmin[pos] = min(segmin[pos*2],segmin[pos*2 + 1]);
             }
         }
 
-        ll segMax(int left, int right, int pos, int first, int last){
+        ll get_segmax(int left, int right, int pos, int first, int last){
             // [left,right)に注意する
             if(right <= first or left >= last) return (ll)-1e18;
-            if(left <= first and last <= right) return seg[pos];
+            if(left <= first and last <= right) return segmax[pos];
 
             int mid = (first+last)/2;
-            ll AnswerL = segMax(left,right,pos*2    ,first,mid);
-            ll AnswerR = segMax(left,right,pos*2 + 1,mid,last);
+            ll AnswerL = get_segmax(left,right,pos*2    ,first,mid);
+            ll AnswerR = get_segmax(left,right,pos*2 + 1,mid,last);
             return max(AnswerL,AnswerR);
+        }
+        ll get_segmin(int left, int right, int pos, int first, int last){
+            // [left,right)に注意する
+            if(right <= first or left >= last) return (ll)1e18;
+            if(left <= first and last <= right) return segmin[pos];
+
+            int mid = (first+last)/2;
+            ll AnswerL = get_segmin(left,right,pos*2    ,first,mid);
+            ll AnswerR = get_segmin(left,right,pos*2 + 1,mid,last);
+            return min(AnswerL,AnswerR);
         }
 };
 

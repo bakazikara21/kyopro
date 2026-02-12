@@ -101,5 +101,78 @@ void solve() {
 }
 
 int main() {
-    solve();
+    int N,M;
+    cin >> N >> M;
+    vector<ll> W(N),C(M);
+    for(int i = 0; i < N; i++) cin >> W[i];
+    for(int i = 0; i < M; i++) cin >> C[i];
+    sort(C.rbegin(),C.rend());
+    ll sumW = accumulate(W.begin(),W.end(),0LL);
+    ll sumC = accumulate(C.begin(),C.end(),0LL);
+    if(sumW > sumC){
+        cout << "No" << endl;
+        return 0;
+    }
+    /*
+        bitdpで解く
+        bitdp[mask] := {mask}を積み込むのに使い切ったトラックの台数
+        cap[mask] := {mask}を積み込み終わったときに残っている空き容量(C[bitdp[mask]-1]の残り容量)
+
+        bitdp[1111] = min(bit[1110]+(0001を積み込む),bit[1101]+(0010を積み込む),bit[1011]+(0100を積み込む),bit[0111]+(1000を積み込む))
+    */
+    vector<ll> bitdp((1<<N),INF),cap((1<<N));
+    bitdp[0] = 0;
+    cap[0] = C[0];
+    for(int mask = 1; mask < (1<<N); mask++){
+        // bitdp[mask]の最小値をここのループのみで求める
+        for(int k = 0; k < N; k++){
+            if(mask == (1<<k)){
+                // k番目の袋だけトラックに積み込むとき
+                if(C[0]-W[k] >= 0){
+                    cap[mask] = C[0]-W[k];
+                    bitdp[mask] = 0;
+                }
+                break;
+            }
+            if(!((mask >> k) & 1)) continue;
+
+            int other = mask - (1<<k); // other + object -> mask
+            if(bitdp[other] >= M) continue;
+
+            // bitdp[mask] = min(bitdp[mask],bitdp[other]+0 or 1)的な
+            int num = bitdp[other];
+            ll capa = cap[other];   // 現在使用しているトラックの残り容量
+
+            if(capa >= W[k]){
+                capa -= W[k];
+            }
+            else {
+                if(num+1 < M and C[num+1] >= W[k]){
+                    // 残り容量が足りないので、新しいトラックを使用する
+                    num++;
+                    capa = C[num]-W[k];
+                }
+                else{
+                    // k番目の荷物が積み込めないとき
+                    continue;
+                }
+            }
+        
+            // {mask}の最小使用トラック数を更新する
+            if(bitdp[mask] > num){
+                bitdp[mask] = num;
+                cap[mask] = capa;
+            }
+            else if(bitdp[mask]==num){
+                // 使用トラック数が等しいとき、capは大きいほうがよい
+                cap[mask] = max(cap[mask],capa);
+            }
+            // 使用トラック数が元々のほうが少ないとき何もしない
+        }
+    }
+
+    if(bitdp[(1<<N)-1] >= M){
+        cout << "No" << endl;
+    }
+    else cout << "Yes" << endl;
 }

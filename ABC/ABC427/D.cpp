@@ -23,8 +23,8 @@ int main(){
             }
             else ans[i][2*K] = "Bob";
         }
-        for(int i = 0; i < N; i++){
-            for(int k = 2*K-1; k >= 0; k--){
+        for(int k = 2*K-1; k >= 0; k--){
+            for(int i = 0; i < N; i++){
                 if(k%2 == 0){
                     // 偶数回目はAliceが動かせる
                     bool ok = false;
@@ -49,6 +49,12 @@ int main(){
                 }
             }
         }
+        // for(int k = 0; k <= 2*K; k++){
+        //     for(int i = 0; i < N; i++){
+        //         cout << ans[i][k] << " ";
+        //     }
+        //     cout << endl;
+        // }
         cout << ans[0][0] << endl;
     }
 }

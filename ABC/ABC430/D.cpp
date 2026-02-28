@@ -1,60 +1,73 @@
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
-
+const ll INF = (ll)1e18;
 int main(){
     // setを使ってsortをやめましょう
-    int N;
-    cin >> N;
-    vector<ll> X(N+1);
-    vector<ll> pos;
-    map<ll,ll> d;
+    int N;  cin >> N;
+    set<ll> st;
+    st.insert(0);
     ll sum = 0;
-    X[0] = 0;
-    pos.push_back(0);
-    for(int i = 1; i <= N; i++){
-        cin >> X[i];
-        // i+1人立っている
-        if(i == 1){
-            d[0] = X[i];
-            d[X[i]] = X[i];
-            sum += 2*X[i];
-        }else{
-            int k = pos.size();
-            int id = upper_bound(pos.begin(),pos.end(),X[i])-pos.begin();
-            //cout << id << " ";
-            if(id == k){
-                // X[i]が一番大きいとき
-                sum += X[i]-pos[k-1];
-                if(d[pos[id-1]] > X[i]-pos[id-1]){
-                    sum -= (d[pos[id-1]] - (X[i]-pos[id-1]));
-                    d[pos[id-1]] = X[i]-pos[id-1];
-                }
-                d[X[i]] = X[i]-pos[k-1];
-            }else if(id > 0){
-                // X[i]が二人の間になるとき
-                sum += min(pos[id]-X[i],X[i]-pos[id-1]);
-                if(d[pos[id]] > pos[id]-X[i]){
-                    sum -= (d[pos[id]] - (pos[id]-X[i]));
-                    d[pos[id]] = pos[id]-X[i];
-                }
-                if(d[pos[id-1]] > X[i]-pos[id-1]){
-                    sum -= (d[pos[id-1]] - (X[i]-pos[id-1]));
-                    d[pos[id-1]] = X[i]-pos[id-1];
-                }
-                d[X[i]] = min(pos[id]-X[i],X[i]-pos[id-1]);
-            }else{
-                // X[i]が一番小さいとき
-                sum += pos[id]-X[i];
-                if(d[pos[id]] > pos[id]-X[i]){
-                    sum -= (d[pos[id]] - (pos[id]-X[i]));
-                    d[pos[id]] = pos[id]-X[i];
-                }
-                d[X[i]] = pos[id]-X[i];
+    for(int i = 0; i < N; i++){
+        ll X; cin >> X;
+        auto itr = st.lower_bound(X);   // Xnext
+        ll Xnext = INF;
+        ll Xnene = INF;
+        ll Xprev = INF;
+        ll Xprpr = INF;
+        if(itr != st.end()){
+            Xnext = *itr;
+            itr = next(itr);
+            if(itr != st.end()){
+                Xnene = *itr;
+            }
+            itr = prev(itr);
+        }
+        if(itr != st.begin()){
+            itr = prev(itr);
+            Xprev = *itr;
+            if(itr != st.begin()){
+                itr = prev(itr);
+                Xprpr = *itr;
             }
         }
-        pos.push_back(X[i]);
-        sort(pos.begin(),pos.end());
+        if(Xprev < INF and Xnext < INF){
+            sum += min(Xnext-X,X-Xprev);    // Xを中心としたdi
+        }
+        else if(Xprev < INF){
+            sum += X-Xprev;
+        }
+        else if(Xnext < INF){
+            sum += Xnext-X;
+        }
+        if(Xprev < INF){
+            if(Xprpr < INF){
+                sum -= min(Xnext-Xprev,Xprev-Xprpr);    // Xprev中心としたdi
+                sum += min(X-Xprev,Xprev-Xprpr);
+            }
+            else if(Xnext < INF){
+                sum -= Xnext-Xprev;
+                sum += X-Xprev;
+            }
+            else sum += X-Xprev;
+        }
+        if(Xnext < INF){
+            if(Xnene < INF and Xprev < INF){
+                sum -= min(Xnene-Xnext,Xnext-Xprev);    // Xnext中心としたdi
+                sum += min(Xnene-Xnext,Xnext-X);
+            }
+            else if(Xnene < INF){
+                sum -= Xnene-Xnext;
+                sum += min(Xnene-Xnext,Xnext-X);
+            }
+            else if(Xprev < INF){
+                sum -= Xnext-Xprev;
+                sum += Xnext-X;
+            }
+            else sum += Xnext-X;
+        }
+
+        st.insert(X);
         cout << sum << endl;
     }
 }

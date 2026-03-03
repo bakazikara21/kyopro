@@ -1,28 +1,26 @@
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
-
-class SegRMQ{
+/*
+    セグメント木は完全二分木を1次元配列で管理する
+*/
+class SegmentTreeRMQ{
     // セグメント木RMQ 区間最大・最小
+    private:
+    vector<ll> segmax;
+    vector<ll> segmin;
+    int n;
+    
     public:
-        vector<ll> segmax;
-        vector<ll> segmin;
-        int n;
-
-        SegRMQ(int N){
-            int siz = 1;
-            while(siz < N){
-                siz *= 2;
-            }
-            n = siz;
-            segmax.resize(2*n);
-            segmin.resize(2*n);
-            for(int i = 0; i < 2*n; i++){
+        SegmentTreeRMQ(int N):segmax(2*N),segmin(2*N){
+            for(int i = 0; i < 2*N; i++){
                 segmax[i] = 0;
                 segmin[i] = 0;
             }
+            n = N;
         }
 
+        // A[pos]の値をxに更新する
         void update(int pos, ll x){
             pos += n-1; // 1-indexed
             segmax[pos] = x;
@@ -36,77 +34,94 @@ class SegRMQ{
             }
         }
 
-        ll get_segmax(int left, int right, int pos, int first, int last){
+        // A[pos]の値を +x する
+        void update(int pos, ll x){
+            pos += n-1; // 1-indexed
+            segmax[pos] += x;
+            segmin[pos] += x;
+            while(pos > 1){
+                // 上層部の区間の最大値と最小値を更新する
+                pos /= 2;
+                // pos*2が左の子、pos*2+1が右の子に対応する
+                segmax[pos] = max(segmax[pos*2],segmax[pos*2 + 1]);
+                segmin[pos] = min(segmin[pos*2],segmin[pos*2 + 1]);
+            }
+        }
+
+        ll getRangeMax(int left, int right, int pos, int first, int last){
             // [left,right)に注意する
             if(right <= first or left >= last) return (ll)-1e18;
             if(left <= first and last <= right) return segmax[pos];
 
             int mid = (first+last)/2;
-            ll AnswerL = get_segmax(left,right,pos*2    ,first,mid);
-            ll AnswerR = get_segmax(left,right,pos*2 + 1,mid,last);
+            ll AnswerL = getRangeMax(left,right,pos*2    ,first,mid);
+            ll AnswerR = getRangeMax(left,right,pos*2 + 1,mid,last);
             return max(AnswerL,AnswerR);
         }
-        ll get_segmin(int left, int right, int pos, int first, int last){
+        ll getRangeMin(int left, int right, int pos, int first, int last){
             // [left,right)に注意する
             if(right <= first or left >= last) return (ll)1e18;
             if(left <= first and last <= right) return segmin[pos];
 
             int mid = (first+last)/2;
-            ll AnswerL = get_segmin(left,right,pos*2    ,first,mid);
-            ll AnswerR = get_segmin(left,right,pos*2 + 1,mid,last);
+            ll AnswerL = getRangeMin(left,right,pos*2    ,first,mid);
+            ll AnswerR = getRangeMin(left,right,pos*2 + 1,mid  ,last);
             return min(AnswerL,AnswerR);
         }
 };
 
-class SegRSQ{
+class SegmentTreeRSQ{
     // セグメント木RSQ 区間和
     public:
-        vector<ll> seg;
+        vector<ll> segsum;
         int n;
 
-        SegRSQ(int N) : seg(2*N){
+        SegmentTreeRSQ(int N) : segsum(2*N){
             for(int i = 0; i < 2*N; i++){
-                seg[i] = 0;
+                segsum[i] = 0;
             }
             n = N;
         }
 
+        // A[pos]の値をxに更新する
         void update(int pos, ll x){
             pos += n-1; // 1-indexed
-            seg[pos] = x;
+            segsum[pos] = x;
             while(pos > 1){
                 // 上層部の区間和を更新する
                 pos /= 2;
-                // seg[pos]が更新されなかったらbreakでもよいと思う
-                seg[pos] = seg[pos*2] + seg[pos*2+1];
+                // segsum[pos]が更新されなかったらbreakでもよいと思う
+                segsum[pos] = segsum[pos*2] + segsum[pos*2+1];
             }
         }
 
+        // A[pos]の値を +x する
         void add(int pos, ll x){
             // segに差分配列を持たせると区間加算が実現できる
             // 区間加算を行うとき、加算による更新が必要
             pos += n-1; // 1-indexed
-            seg[pos] += x;
+            segsum[pos] += x;
             while(pos > 1){
                 // 上層部の区間和を更新する
                 pos /= 2;
-                // seg[pos]が更新されなかったらbreakでもよいと思う
-                seg[pos] = seg[pos*2] + seg[pos*2+1];
+                // pos*2が左の子、pos*2+1が右の子に対応する
+                segsum[pos] = segsum[pos*2] + segsum[pos*2+1];
             }
         }
 
-        ll segSum(int left, int right, int pos, int first, int last){
+        ll getRangeSum(int left, int right, int pos, int first, int last){
             // [left,right)に注意する
             if(right <= first or left >= last) return 0;
-            if(left <= first and last <= right) return seg[pos];
+            if(left <= first and last <= right) return segsum[pos];
 
             int mid = (first+last)/2;
-            ll AnswerL = segSum(left,right,pos*2    ,first,mid);
-            ll AnswerR = segSum(left,right,pos*2 + 1,mid,last);
+            ll AnswerL = getRangeSum(left,right,pos*2    ,first,mid);
+            ll AnswerR = getRangeSum(left,right,pos*2 + 1,mid  ,last);
             return AnswerL+AnswerR;
         }
 };
 
+// N以上の整数で最小の2のべき乗を返す
 int init(int N){
     int siz = 1;
     while(siz < N){

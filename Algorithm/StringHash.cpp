@@ -3,6 +3,10 @@ using namespace std;
 using ll = long long;
 const ll mod = 2147483647;
 
+/*
+    String Hash:
+    
+*/
 int main(){
     int N,Q;
     string S;

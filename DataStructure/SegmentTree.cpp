@@ -35,7 +35,7 @@ class SegmentTreeRMQ{
         }
 
         // A[pos]の値を +x する
-        void update(int pos, ll x){
+        void add(int pos, ll x){
             pos += n-1; // 1-indexed
             segmax[pos] += x;
             segmin[pos] += x;

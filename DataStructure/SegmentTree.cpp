@@ -48,6 +48,7 @@ class SegmentTreeRMQ{
             }
         }
 
+        // [left,right)の区間の最大値を返す
         ll getRangeMax(int left, int right, int pos, int first, int last){
             // [left,right)に注意する
             if(right <= first or left >= last) return (ll)-1e18;
@@ -58,6 +59,8 @@ class SegmentTreeRMQ{
             ll AnswerR = getRangeMax(left,right,pos*2 + 1,mid,last);
             return max(AnswerL,AnswerR);
         }
+
+        // [left,right)の区間の最小値を返す
         ll getRangeMin(int left, int right, int pos, int first, int last){
             // [left,right)に注意する
             if(right <= first or left >= last) return (ll)1e18;
@@ -67,6 +70,24 @@ class SegmentTreeRMQ{
             ll AnswerL = getRangeMin(left,right,pos*2    ,first,mid);
             ll AnswerR = getRangeMin(left,right,pos*2 + 1,mid  ,last);
             return min(AnswerL,AnswerR);
+        }
+
+        // 区間の最大値がX以上となる最小の1-indexを返す
+        int lower_boundMax(ll X, int pos){
+            if(pos >= n){
+                if(segmax[pos] >= X) return pos-n+1;
+                else return -1;
+            }
+
+            if(segmax[pos*2] >= X){
+                // 左の子がX以上なら左側に答えがある
+                return lower_boundMax(X,pos*2);
+            }
+            else if(segmax[pos*2+1] >= X){
+                return lower_boundMax(X,pos*2+1);
+            }
+            
+            return -1;
         }
 };
 

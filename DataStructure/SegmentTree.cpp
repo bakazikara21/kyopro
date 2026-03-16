@@ -72,22 +72,19 @@ class SegmentTreeRMQ{
             return min(AnswerL,AnswerR);
         }
 
-        // 区間の最大値がX以上となる最小の1-indexを返す
-        int lower_boundMax(ll X, int pos){
-            if(pos >= n){
-                if(segmax[pos] >= X) return pos-n+1;
-                else return -1;
-            }
+        // 最初の要素からの区間の最大値がX以上となる最小の1-indexを返す
+        int lower_boundMax(ll X, int pos = 1){
+            if(pos == 1 and segmax[1] < X) return -1;
+            if(pos >= n) return pos-n+1;
 
             if(segmax[pos*2] >= X){
                 // 左の子がX以上なら左側に答えがある
                 return lower_boundMax(X,pos*2);
             }
-            else if(segmax[pos*2+1] >= X){
+            else{
+                // そうでないなら右側に答えがある
                 return lower_boundMax(X,pos*2+1);
             }
-            
-            return -1;
         }
 };
 
@@ -130,6 +127,7 @@ class SegmentTreeRSQ{
             }
         }
 
+        // [left,right)の区間和を返す
         ll getRangeSum(int left, int right, int pos, int first, int last){
             // [left,right)に注意する
             if(right <= first or left >= last) return 0;
@@ -139,6 +137,21 @@ class SegmentTreeRSQ{
             ll AnswerL = getRangeSum(left,right,pos*2    ,first,mid);
             ll AnswerR = getRangeSum(left,right,pos*2 + 1,mid  ,last);
             return AnswerL+AnswerR;
+        }
+
+        // 最初の要素からの区間和がX以上となる最小の1-indexを返す
+        int lower_boundSum(ll X, int pos = 1){
+            if(pos == 1 and segsum[1] < X) return -1;
+            if(pos >= n) return pos-n+1;
+        
+            if(segsum[pos*2] >= X){
+                // 左の子がX以上なら左側に答えがある
+                return lower_boundSum(X,pos*2);
+            }
+            else{ 
+                // そうでなければ、左の区間和を引いた残りを右側に探しに行く
+                return lower_boundSum(X-segsum[pos*2],pos*2+1);
+            }
         }
 };
 

@@ -86,6 +86,21 @@ class SegmentTreeRMQ{
                 return lower_boundMax(X,pos*2+1);
             }
         }
+
+        // 最初の要素からの区間の最小値がX以下となる最小の1-indexを返す
+        int lower_boundMin(ll X, int pos = 1){
+            if(pos == 1 and segmin[1] > X) return -1;
+            if(pos >= n) return pos-n+1;
+
+            if(segmin[pos*2] <= X){
+                // 左の子がX以下なら左側に答えがある
+                return lower_boundMin(X,pos*2);
+            }
+            else{
+                // そうでないなら右側に答えがある
+                return lower_boundMin(X,pos*2+1);
+            }
+        }
 };
 
 class SegmentTreeRSQ{

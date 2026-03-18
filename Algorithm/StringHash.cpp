@@ -5,7 +5,7 @@ const ll mod = 2147483647;
 
 /*
     String Hash:
-    
+    文字(a~z)を整数(0~25)に変換し、2桁区切りの整数として扱う
 */
 int main(){
     int N,Q;

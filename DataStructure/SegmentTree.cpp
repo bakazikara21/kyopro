@@ -49,7 +49,8 @@ class SegmentTreeRMQ{
         }
 
         // [left,right)の区間の最大値を返す
-        ll getRangeMax(int left, int right, int pos, int first, int last){
+        ll getRangeMax(int left, int right, int pos = 1, int first = 1, int last = -1){
+            if(last < 0) last = n+1;
             // [left,right)に注意する
             if(right <= first or left >= last) return (ll)-1e18;
             if(left <= first and last <= right) return segmax[pos];
@@ -61,7 +62,8 @@ class SegmentTreeRMQ{
         }
 
         // [left,right)の区間の最小値を返す
-        ll getRangeMin(int left, int right, int pos, int first, int last){
+        ll getRangeMin(int left, int right, int pos = 1, int first = 1, int last = -1){
+            if(last < 0) last = n+1;
             // [left,right)に注意する
             if(right <= first or left >= last) return (ll)1e18;
             if(left <= first and last <= right) return segmin[pos];
@@ -143,7 +145,8 @@ class SegmentTreeRSQ{
         }
 
         // [left,right)の区間和を返す
-        ll getRangeSum(int left, int right, int pos, int first, int last){
+        ll getRangeSum(int left, int right, int pos = 1, int first = 1, int last = -1){
+            if(last < 0) last = n+1;
             // [left,right)に注意する
             if(right <= first or left >= last) return 0;
             if(left <= first and last <= right) return segsum[pos];

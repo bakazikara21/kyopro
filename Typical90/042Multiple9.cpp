@@ -4,6 +4,7 @@ using ll = long long;
 const ll INF = (ll)2e18;
 const int inf = (int)1e9;
 const ll mod = (ll)1e9 + 7;
+
 int main(){
     ll K; cin >> K;
     if((K%9) != 0){
@@ -18,10 +19,10 @@ int main(){
         ll sum = 0;
         for(int j = 1; j <= 9; j++){
             if(k-j < 0) break;
-            sum += dp[k-j];
+            sum += dp[k-j]; // 最上位桁がjのときdp[k-j]とおり存在する
             sum %= mod;
         }
-        dp[k] = sum + 1;
+        dp[k] = sum + (k <= 9); // 1桁で実現できる場合のみインクリメント
         dp[k] %= mod;
     }
     cout << dp[K] << endl;

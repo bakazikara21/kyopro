@@ -5,10 +5,6 @@ const ll INF = (ll)2e18;
 const int inf = (int)1e9;
 const ll mod = 998244353;
 
-/*
-    1
-    10000 132でWrong Answer
-*/
 int bit(ll n){
     int ret = 0;
     while(n > 0){
@@ -52,7 +48,7 @@ int main(){
         if(tm < 0) tm += M;
         ll d = __gcd(M,tm);
         // x = M/d の倍数ならなんでもOK!
-        // yの個数は9*tens[i-1]個
+        // yの個数はN-tens[i-1]+1個
         ll X = N / (M/d);   X %= mod;
         ll Y = (N-tensMOD[ybit-1]+1);  Y %= mod;
         ans += X*Y;

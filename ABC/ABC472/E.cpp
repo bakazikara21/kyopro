@@ -17,11 +17,13 @@ int main(){
             graph[v].push_back(u);
         }
         vector<int> color(N,-1);
+        vector<int> from(N,-1);
         color[0] = 0;
         queue<int> que;
         que.push(0);
+        from[0] = -1;
         int st,en;
-        while(!que.empty() and !flag){
+        while(!que.empty()){
             int v = que.front(); que.pop();
             for(int nv : graph[v]){
                 if(color[nv] != -1){
@@ -31,25 +33,15 @@ int main(){
                     else {
                         // 解が存在する
                         // nv -> ... -> v -> nvという閉路
-                        st = nv;
-                        en = v;
+                        st = v;
+                        en = nv;
                         flag = true;
-                        graph[v].erase(
-                            // removeは対象の値を後ろに追いやって、追いやった最初のiteratorを返す
-                            remove(graph[v].begin(), graph[v].end(), nv),
-                            graph[v].end()
-                        );
-
-                        graph[nv].erase(
-                            remove(graph[nv].begin(), graph[nv].end(), v),
-                            graph[nv].end()
-                        );
-                        break;
                     }   
                 }
                 else{
                     color[nv] = 1-color[v];
                     que.push(nv);
+                    from[nv] = v;
                 }
             }
         }
@@ -57,29 +49,34 @@ int main(){
             cout << -1 << endl;
             continue;
         }
-        // st -> enへのパスを出力すればよい
-        vector<bool> used(N,false);
-        vector<int> path;
-        auto dfs = [&](auto self, int v, int goal)->bool{
-            used[v] = true;
-            if(v == goal){
-                path.push_back(v);
-                return true;
-            }
-            for(int nv : graph[v]){
-                if(used[nv]) continue;
-                if(self(self,nv,goal)){
-                    path.push_back(v);
-                    return true;
-                }
-            }
-            return false;
-        };
-        dfs(dfs,st,en);
-        int K = (int)path.size();
-        cout << K << endl;
+        // st -> 0 en -> 0へのパスを出力すればよい
+        vector<int> path1, path2;
+        int lca = -1;   // 最近傍の共通親
+        int now = st;
+        while(now != -1){
+            path1.push_back(now);
+            now = from[now];
+        }
+        now = en;
+        while(now != -1){
+            path2.push_back(now);
+            now = from[now];
+        }
+        while(!path1.empty() and !path2.empty() and path1.back() == path2.back()){
+            lca = path1.back();
+            path1.pop_back();
+            path2.pop_back();
+        }
+        path1.push_back(lca);
+        reverse(path2.begin(),path2.end());
+        int K = (int)path1.size();
+        int L = (int)path2.size();
+        cout << K+L << endl;
         for(int k = 0; k < K; k++){
-            cout << path[k]+1 << " ";
+            cout << path1[k]+1 << " ";
+        }
+        for(int l = 0; l < L; l++){
+            cout << path2[l]+1 << " ";
         }
         cout << endl;
     }

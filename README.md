@@ -18,11 +18,11 @@
 
 ## Usage
 
-各解答は、基本的に単独でコンパイルして実行できる C++ ファイルです。
+各解答は、基本的に単独でコンパイル・実行できる C++ ファイルです。ターミナルでは、たとえば次のように実行します。
 
 ```bash
-g++ -std=c++17 -O2 ABC/ABC470/A.cpp -o main
-./main < in.text
+g++ -std=c++17 -O2 ABC/ABC400-499/ABC470/A.cpp -o main
+./main
 ```
 
 ## Notes
